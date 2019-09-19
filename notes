@@ -1,3 +1,14 @@
 walkie.cool = "CAESIDFs9PIxlDPuKBq8umDPySxkI7DseSBQ0R72EUe08Amx"
 justin = "CAESILaPh1O6yRK4laDqCTuYnccs9NO44Ji1x4zEvavuiHbL"
 beeptexting = "CAESINKyWxkvcn91jXAgeXVGI2kUwbB1kfl+QjaMuhyg4oeV"
+
+First pass:
+We set the sessionId on the Channel when invitee accepts invite and sets Channel slot
+We query our server for otSessionId and otToken before we create the Channel
+My worry is that this will slow down setting the Channel...Maybe it's unwarranted?
+This is probably an indication that we should create a SetChannelSlotService...or just create a fn in FBM
+
+How do we make sure tokens are always valid? Perhaps we create the NEXT token once the User is already connected?
+Hmmm...this might disconnect the User as it would invalidate the prev token
+
+Let's just try it the simple way: query the server for the token each time we power on 

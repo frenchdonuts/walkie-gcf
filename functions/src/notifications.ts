@@ -10,6 +10,7 @@ export const notifyFriends = functions.https.onCall((data, context) => {
     return Promise.reject(`Unauthenticated attempt to notify friends.`)
   const uid = context.auth.uid
   const msg = data.msg
+  const payload = data.data
 
   if (!msg)
     return Promise.reject(`Cannot push notify friends with no msg(=${msg}).`)
@@ -22,7 +23,7 @@ export const notifyFriends = functions.https.onCall((data, context) => {
         .map(channel => {
           const notifyConfig = {
             msg: msg,
-            data: { notifierId: uid, channelId: channel.id }
+            data: Object.assign({ notifierId: uid, channelId: channel.id }, payload)
           }
           return notifyUser(channel.otherUser.id, notifyConfig)
             .catch(e => console.log(e))

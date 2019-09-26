@@ -1,6 +1,13 @@
 import * as admin from 'firebase-admin'
 import * as functions from 'firebase-functions'
 
+export const FieldValue = admin.firestore.FieldValue
+export type Timestamp = admin.firestore.Timestamp
+export type GeoPoint = admin.firestore.GeoPoint
+export type QuerySnapshot = admin.firestore.QuerySnapshot
+export type DocumentSnapshot = admin.firestore.DocumentSnapshot
+export type DocumentData = admin.firestore.DocumentData
+
 admin.initializeApp()
 
 export const db = admin.firestore()

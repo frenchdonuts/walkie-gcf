@@ -1,6 +1,10 @@
 walkie.cool = "CAESIDFs9PIxlDPuKBq8umDPySxkI7DseSBQ0R72EUe08Amx"
 justin = "CAESILaPh1O6yRK4laDqCTuYnccs9NO44Ji1x4zEvavuiHbL"
 beeptexting = "CAESINKyWxkvcn91jXAgeXVGI2kUwbB1kfl+QjaMuhyg4oeV"
+Create a notifyAllFriends gcf fn on server-side and clientside
+        1) Fetch all channels of powering on User
+        2) Fetch each channels' otherUser's oneSignalPlayerId. Filter nulls
+        3) Push notify each OneSignal Player `<username> powered on walkie`
 
 First pass:
 We set the sessionId on the Channel when invitee accepts invite and sets Channel slot

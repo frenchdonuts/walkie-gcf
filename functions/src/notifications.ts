@@ -2,20 +2,22 @@ import * as functions from 'firebase-functions';
 import axios from 'axios'
 import { notUndefined } from "./utils";
 
-import { Channel, getChannels } from './channel'
+import { Channel, getChannels, getChannel } from './channel'
 import { getUsers } from './user'
 
 export const notifyFriends = functions.https.onCall((data, context) => {
   if (!context.auth || !context.auth.uid)
     return Promise.reject(`Unauthenticated attempt to notify friends.`)
   const uid = context.auth.uid
+  const friendId = data.friendId
   const msg = data.msg
   const payload = data.data
 
   if (!msg)
     return Promise.reject(`Cannot push notify friends with no msg(=${msg}).`)
 
-  return getChannels(uid)
+
+  return friendId ? getChannel(uid, friendId) : getChannels(uid)
     .then(querySnapshot => {
       const notifyTasks = querySnapshot.docs
         .map(Channel.from)

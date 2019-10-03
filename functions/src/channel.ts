@@ -37,6 +37,18 @@ export class Channel {
   }
 }
 
+const Keys = {
+  otherUser: {
+    id: `otherUser.id`
+  }
+}
+
 export function getChannels(uid: string) {
   return channelCollection(uid).get()
+}
+
+export function getChannel(uid: string, otherUserId: String) {
+  return channelCollection(uid)
+    .where(Keys.otherUser.id, '==', otherUserId)
+    .get()
 }

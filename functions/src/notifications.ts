@@ -2,32 +2,33 @@ import * as functions from 'firebase-functions';
 import axios from 'axios'
 import { notUndefined } from "./utils";
 
-import { Channel, getChannels, getChannel } from './channel'
+import { getChannel } from './channel'
 import { getUsers } from './user'
 
-export const notifyFriends = functions.https.onCall((data, context) => {
+export const notifyParticipants = functions.https.onCall((data, context) => {
   if (!context.auth || !context.auth.uid)
-    return Promise.reject(`Unauthenticated attempt to notify friends.`)
+    return Promise.reject(`Unauthenticated call to notifyParticipants.`)
   const uid = context.auth.uid
-  const friendId = data.friendId
+  const channelId = data.channelId
   const msg = data.msg
   const payload = data.data
 
   if (!msg)
-    return Promise.reject(`Cannot push notify friends with no msg(=${msg}).`)
+    return Promise.reject(`Cannot push notify participants with falsey msg(=${msg}).`)
 
 
-  return friendId ? getChannel(uid, friendId) : getChannels(uid)
-    .then(querySnapshot => {
-      const notifyTasks = querySnapshot.docs
-        .map(Channel.from)
-        .filter(notUndefined)
-        .map(channel => {
+  return getChannel(channelId)
+    .then(channel => {
+      if (!channel) 
+        return Promise.reject(`No channel w/ id(=${channelId}) found`)
+
+      const notifyTasks = channel.participantsIds
+        .map(participantId => {
           const notifyConfig = {
             msg: msg,
             data: Object.assign({ notifierId: uid, channelId: channel.id }, payload)
           }
-          return notifyUser(channel.otherUser.id, notifyConfig)
+          return notifyUser(participantId, notifyConfig)
             .catch(e => console.log(e))
         })
 

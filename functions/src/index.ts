@@ -8,4 +8,4 @@ export const genOpenTokToken = OT.genToken
 
 export const genAuthToken = admin.genAuthToken
 
-export const notifyFriends = Notifications.notifyFriends
+export const notifyParticipants = Notifications.notifyParticipants

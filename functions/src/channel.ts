@@ -1,35 +1,31 @@
 import { db, DocumentData, DocumentSnapshot } from './firebase_admin'
-import { userCollectionPath, UserDisplay } from './user'
 import { Option } from './option'
 
-export const channelCollectionPath = (uid: string) => {
-  return `${userCollectionPath}/${uid}/channels`
+export const channelCollectionPath = () => {
+  return `/channels`
 }
 
-const channelCollection = (uid: string) => {
-  return db.collection(channelCollectionPath(uid))
+const channelCollection = () => {
+  return db.collection(channelCollectionPath())
 }
 
 export class Channel {
   constructor(
     public id: string,
-    public otherUser: UserDisplay,
-    public slot: number,
-    public createdAt: Date,
-    public otSessionId: string) { }
+    public creatorId: string,
+    public participantsIds: string[],
+    public otSessionId: string,
+    public createdAt: Date) { }
   public static from(doc: DocumentSnapshot): Option<Channel> {
     const data: Option<DocumentData> = doc.data()
     const createdAt = doc.createTime
-    if (data && data.otherUser && data.slot && createdAt && data.otSessionId) {
-      const otherUser = UserDisplay.from(data.otherUser)
-      if (!otherUser) return undefined
-
+    if (data && data.creatorId && data.participantsIds && data.otSessionId && createdAt) {
       return new Channel(
         doc.id,
-        otherUser,
-        data.slot,
-        createdAt.toDate(),
-        data.otSessionId
+        data.creatorId,
+        data.participantsIds,
+        data.otSessionId,
+        createdAt.toDate()
       )
     }
 
@@ -37,18 +33,15 @@ export class Channel {
   }
 }
 
-const Keys = {
-  otherUser: {
-    id: `otherUser.id`
-  }
-}
-
 export function getChannels(uid: string) {
-  return channelCollection(uid).get()
+  return channelCollection()
+    .where('participantsIds', 'array-contains', uid)
+    .get()
 }
 
-export function getChannel(uid: string, otherUserId: String) {
-  return channelCollection(uid)
-    .where(Keys.otherUser.id, '==', otherUserId)
+export function getChannel(id: string): Promise<Option<Channel>> {
+  return channelCollection()
+    .doc(id)
     .get()
+    .then(Channel.from)
 }

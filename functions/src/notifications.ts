@@ -13,8 +13,8 @@ export const notifyParticipants = functions.https.onCall((data, context) => {
   const msg = data.msg
   const payload = data.data
 
-  if (!msg)
-    return Promise.reject(`Cannot push notify participants with falsey msg(=${msg}).`)
+  if (!msg || !channelId)
+    return Promise.reject(`Cannot push notify participants with falsey channelId(=${channelId}) or msg(=${msg}).`)
 
 
   return getChannel(channelId)
@@ -23,6 +23,7 @@ export const notifyParticipants = functions.https.onCall((data, context) => {
         return Promise.reject(`No channel w/ id(=${channelId}) found`)
 
       const notifyTasks = channel.participantsIds
+        .filter(id => id != uid)
         .map(participantId => {
           const notifyConfig = {
             msg: msg,

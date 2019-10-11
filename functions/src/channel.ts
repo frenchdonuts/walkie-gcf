@@ -45,3 +45,11 @@ export function getChannel(id: string): Promise<Option<Channel>> {
     .get()
     .then(Channel.from)
 }
+
+
+// import * as functions from 'firebase-functions';
+// export const testGetChannel = functions.https.onCall((data, context) => {
+//   const channelId = data.channelId
+//   return getChannel(channelId)
+//     .then(channel => console.log("success!"))
+// })
